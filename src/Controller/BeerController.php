@@ -47,9 +47,7 @@ class BeerController extends AbstractController
             array_push($beers, $beer);
         }
         
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
+        $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
         $final = $serializer->serialize($beers, 'json');
         return new Response($final, 200);
     }
@@ -70,9 +68,7 @@ class BeerController extends AbstractController
         $beer->setSlogan($data->tagline);
         $beer->setFirstbrewed($data->brewers_tips);
        
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
+        $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
         $final = $serializer->serialize($beer, 'json');
         return new Response($final, 200);
     }
