@@ -3,25 +3,17 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-//use Symfony\Component\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Entity\Beer;
+use App\Service\DataGetter;
 
 class BeerController extends AbstractController
 {
@@ -38,34 +30,17 @@ class BeerController extends AbstractController
     }
     
    
-    public function getData($param, $value){
-        $this->beer = new Beer();
-        $client = new \GuzzleHttp\Client();
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'https://api.punkapi.com/v2/beers', [
-            'query' => [$param => $value]
-        ]);       
-        $promise = $client->sendAsync($request)->then(function (ResponseInterface $response) {;
-            return $response->getBody()->getContents();
-        });
-        return   $promise->wait();
    
-      
-    }
- /* $response = $this->client->request('GET', 'https://api.punkapi.com/v2/beers/random');
-   
-        dump($response);
-        return $response;*/
-    //}
-    
     /**    
      *  @Rest\Get("/search/{food}", name="beer")
      *  @return array|\FOS\RestBundle\View\View
      */
-    public function searchByFood(Request $request)
+    public function searchByFood(Request $request, DataGetter $dataGetter)
    {
         $food = $request->get('food');
         $beers = [];
-        $allData = json_decode($this->getData('food', $food));
+        $allData = json_decode($dataGetter->getData('food', $food));
+        
         foreach($allData as $data){
         $beer = new Beer();
             $beer->setDescription($data->description);
@@ -85,10 +60,10 @@ class BeerController extends AbstractController
      *  @Rest\Get("/detail/{id}", name="beer")
      *  @return array|\FOS\RestBundle\View\View
      */
-    public function searchById(Request $request)
+    public function searchById(Request $request,DataGetter $dataGetter)
    {
-        $id = $request->get('id');
-        $data = json_decode($this->getData('id',$id))[0];
+        $id = $request->get('ids');
+        $data = json_decode($dataGetter->getData('ids',$id))[0];
         $beer = new Beer();
         $beer->setDescription($data->description);
         $beer->setId($data->id);
