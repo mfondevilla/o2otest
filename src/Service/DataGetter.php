@@ -14,21 +14,17 @@
 
 namespace App\Service;
 
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+//use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Entity\Beer;
 
 class DataGetter {
-    private $client;
-    
+  //  private $client;
+   /*
     public function __construct(HttpClientInterface $client) {
         $this->client = $client;
     }
-    
-    
+   */
+  
     public function getData($param, $value){
         
         $this->beer = new Beer();
@@ -37,12 +33,13 @@ class DataGetter {
         return $response->getBody()->getContents();
      
     }
-    /*
-     * //sin guzzle
+    
+    //sin guzzle
+  /*
     public function getData($param, $value){        
         $response = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?'. $param .'='. $value);
         return  $response->getContent();
     }
-    
     */
+    
 }
