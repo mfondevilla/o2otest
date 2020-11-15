@@ -18,25 +18,31 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Entity\Beer;
 
 class DataGetter {
+    private $client;
+    
+    public function __construct(HttpClientInterface $client) {
+        $this->client = $client;
+    }
+    
     
     public function getData($param, $value){
         
         $this->beer = new Beer();
         $client = new \GuzzleHttp\Client();
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'https://api.punkapi.com/v2/beers?'. $param .'='. $value);     
-        
-        $promise = $client->sendAsync($request)->then(function (ResponseInterface $response) {
-          
-            return $response->getBody()->getContents();
-        });
-      
-        return  $promise->wait(); 
-       
-      
+        $response = $client->request('GET', 'https://api.punkapi.com/v2/beers?'. $param .'='. $value);    
+        return $response->getBody()->getContents();
+     
+    }
+    /*
+     * //sin guzzle
+    public function getData($param, $value){        
+        $response = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?'. $param .'='. $value);
+        return  $response->getContent();
     }
     
-    
+    */
 }

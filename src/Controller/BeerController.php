@@ -28,8 +28,7 @@ class BeerController extends AbstractController
             'path' => 'src/Controller/BeerController.php',
         ]);
     }
-    
-   
+       
    
     /**    
      *  @Rest\Get("/search/{food}", name="beer")
@@ -40,7 +39,6 @@ class BeerController extends AbstractController
         $food = $request->get('food');
         $beers = [];
         $allData = json_decode($dataGetter->getData('food', $food));
-        
         foreach($allData as $data){
         $beer = new Beer();
             $beer->setDescription($data->description);
